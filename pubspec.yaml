@@ -1,0 +1,8 @@
+name: document2tsv
+version: 0.0.1
+author: Matthew Cross
+description: Converts mongodb collections into TSV files. This script assumes your documents share the same structure as the first document in the collection.
+homepage: https://github.com/mcross1882/document2tsv
+dependencies:
+  io: any
+  mongo_dart: any
