@@ -30,7 +30,7 @@ Future<bool> writeRowToFile(DbCollection collection, IOSink streamSink) {
 
 void main(List<String> argv) {
   if (argv.length < 3) {
-    return print("Syntax: document2csv.dart [mongo address] [collection name] [output file]\n");
+    return print("Syntax: document2tsv.dart [mongo address] [collection name] [output file]\n");
   }
 
   final Db mongo = new Db(argv[0]);
