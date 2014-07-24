@@ -13,6 +13,37 @@ import 'dart:io';
 import 'dart:async';
 import 'package:mongo_dart/mongo_dart.dart';
 
+void main(List<String> arguments) {
+  if (arguments.length < 3) {
+    return print("Syntax: document2tsv.dart [mongo address] [collection name] [output file]\n");
+  }
+
+  try {
+    copyCollectionToFile(arguments);
+  } catch(error) {
+    print("Caught Exception: ${error.toString()}\n");
+  }
+}
+
+void copyCollectionToFile(List<String> arguments) {
+  final Db mongo = new Db(arguments[0]);
+  final DbCollection mongoCollection = mongo.collection(arguments[1]);
+
+  final File outputFile = new File(arguments[2]);
+  final IOSink streamSink = outputFile.openWrite();
+
+  mongo.open().then((_) {
+    return writeRowToFile(mongoCollection, streamSink);
+  }).then((_) {
+    streamSink.close();
+    mongo.close();
+
+    print("Finished!\n");
+  }).catchError((error) {
+    print("Caught Exception: ${error.toString()}\n");
+  });
+}
+
 Future<bool> writeRowToFile(DbCollection collection, IOSink streamSink) {
   var cursor = collection.find();
 
@@ -25,33 +56,5 @@ Future<bool> writeRowToFile(DbCollection collection, IOSink streamSink) {
     return cursor.forEach((Map document) {
       streamSink.writeln(document.values.join("\t"));
     });
-  });
-}
-
-void main(List<String> argv) {
-  if (argv.length < 3) {
-    return print("Syntax: document2tsv.dart [mongo address] [collection name] [output file]\n");
-  }
-
-  final Db mongo = new Db(argv[0]);
-  final DbCollection mongoCollection = mongo.collection(argv[1]);
-
-  final File outputFile = new File(argv[2]);
-  final IOSink streamSink = outputFile.openWrite();
-
-  mongo.open().then((_) {
-    return writeRowToFile(mongoCollection, streamSink);
-  }).then((_) {
-    if (null != streamSink) {
-      streamSink.close();
-    }
-
-    if (null != mongo) {
-      mongo.close();
-    }
-
-    print("Finished!\n");
-  }).catchError((error) {
-    print("Caught Exception: ${error.toString()}\n");
   });
 }
