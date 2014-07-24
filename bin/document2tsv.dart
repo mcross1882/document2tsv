@@ -33,7 +33,7 @@ void copyCollectionToFile(List<String> arguments) {
   final IOSink streamSink = outputFile.openWrite();
 
   mongo.open().then((_) {
-    return writeRowToFile(mongoCollection, streamSink);
+    return writeRowsToFile(mongoCollection, streamSink);
   }).then((_) {
     streamSink.close();
     mongo.close();
@@ -44,7 +44,7 @@ void copyCollectionToFile(List<String> arguments) {
   });
 }
 
-Future<bool> writeRowToFile(DbCollection collection, IOSink streamSink) {
+Future<bool> writeRowsToFile(DbCollection collection, IOSink streamSink) {
   var cursor = collection.find();
 
   return cursor.nextObject().then((Map document) {
